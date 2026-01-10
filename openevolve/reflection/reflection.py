@@ -63,6 +63,7 @@ The changes from the base code to your generated code are as follows:
 Your final task is relect to help youself find better kissing number. Current sota result is {self.sota_number}. Currently, your task is to reflect on these three versions of code and their results. You should conduct detailed reasoning on {task_description}.Then provide several suggestions that help you develop better code in the next time based on your analysis.
 ## Final Instruction
 You should provide your reflection after thorough analysis. Your reflection should be general enough and not indicate too much details. Your reflection should be brief and just be several sentences. Your reflection should just be some guidelines for you to follow in the next code generation step. Don't give new code or pseudo code. Just provide your reflection in several sentences.
+The final reflection should be just some general guidelines and don't include the analysis why you fail or success, don't include the specific next attempt.
 Please provide your reflection with the json format as below:
 ```json
 {{

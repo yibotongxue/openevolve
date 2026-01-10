@@ -151,7 +151,7 @@ class PromptSampler:
 
         return {
             "system": system_message,
-            "user": user_message + f"\n\nHere are some reflection that you made before:\n```\n{reflection or "None"}\nYou can use them if needed.```",
+            "user": user_message + f"\n\nHere are some reflection that you made before:\n```\n{reflection or "None"}\n```\nYou can use them if needed. However don't be limited by them and some of them may be wrong.",
         }
 
     def _format_metrics(self, metrics: Dict[str, float]) -> str:
