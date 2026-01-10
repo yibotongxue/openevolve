@@ -62,6 +62,7 @@ class PromptSampler:
         template_key: Optional[str] = None,
         program_artifacts: Optional[Dict[str, Union[str, bytes]]] = None,
         feature_dimensions: Optional[List[str]] = None,
+        reflection: str = "",
         **kwargs: Any,
     ) -> Dict[str, str]:
         """
@@ -150,7 +151,7 @@ class PromptSampler:
 
         return {
             "system": system_message,
-            "user": user_message,
+            "user": user_message + f"\n\nHere are some reflection that you made before:\n```\n{reflection or "None"}\nYou can use them if needed.```",
         }
 
     def _format_metrics(self, metrics: Dict[str, float]) -> str:

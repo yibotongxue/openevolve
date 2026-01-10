@@ -17,6 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from openevolve.config import Config
 from openevolve.database import Program, ProgramDatabase
 from openevolve.utils.metrics_utils import safe_numeric_average
+from openevolve.reflection.reflection import ReflectionGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +132,7 @@ def _lazy_init_worker_components():
 
 
 def _run_iteration_worker(
-    iteration: int, db_snapshot: Dict[str, Any], parent_id: str, inspiration_ids: List[str]
+    iteration: int, db_snapshot: Dict[str, Any], parent_id: str, inspiration_ids: List[str], reflection_generator: ReflectionGenerator,
 ) -> SerializableResult:
     """Run a single iteration in a worker process"""
     try:
@@ -180,6 +181,7 @@ def _run_iteration_worker(
             diff_based_evolution=_worker_config.diff_based_evolution,
             program_artifacts=parent_artifacts,
             feature_dimensions=db_snapshot.get("feature_dimensions", []),
+            reflection=reflection_generator.get_reflection(),
         )
 
         iteration_start = time.time()
@@ -258,6 +260,15 @@ def _run_iteration_worker(
 
         iteration_time = time.time() - iteration_start
 
+        reflection = reflection_generator.generate_reflection(
+            previous_code=parent.code,
+            previous_number=parent.metrics.get("num_points", 0),
+            generated_code=child_program.code,
+            generated_number=child_program.metrics.get("num_points", 0),
+            changes=changes_summary,
+        )
+        reflection_generator.update_reflection(reflection)
+
         return SerializableResult(
             child_program_dict=child_program.to_dict(),
             parent_id=parent.id,
@@ -281,6 +292,7 @@ class ProcessParallelController:
         config: Config,
         evaluation_file: str,
         database: ProgramDatabase,
+        reflection_generator: ReflectionGenerator,
         evolution_tracer=None,
         file_suffix: str = ".py",
     ):
@@ -297,6 +309,8 @@ class ProcessParallelController:
         # Number of worker processes
         self.num_workers = config.evaluator.parallel_evaluations
         self.num_islands = config.database.num_islands
+
+        self.reflection_generator = reflection_generator
 
         logger.info(f"Initialized process parallel controller with {self.num_workers} workers")
 
@@ -733,6 +747,7 @@ class ProcessParallelController:
                 db_snapshot,
                 parent.id,
                 [insp.id for insp in inspirations],
+                reflection_generator=self.reflection_generator,
             )
 
             return future

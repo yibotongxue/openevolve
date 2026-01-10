@@ -20,6 +20,7 @@ from openevolve.process_parallel import ProcessParallelController
 from openevolve.prompt.sampler import PromptSampler
 from openevolve.utils.code_utils import extract_code_language
 from openevolve.utils.format_utils import format_improvement_safe, format_metrics_safe
+from openevolve.reflection.reflection import ReflectionGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -184,6 +185,8 @@ class OpenEvolve:
         # Initialize improved parallel processing components
         self.parallel_controller = None
 
+        self.reflection_generator = ReflectionGenerator(6, 72)
+
     def _setup_logging(self) -> None:
         """Set up logging"""
         log_dir = self.config.log_dir or os.path.join(self.output_dir, "logs")
@@ -297,7 +300,8 @@ class OpenEvolve:
                 self.config,
                 self.evaluation_file,
                 self.database,
-                self.evolution_tracer,
+                reflection_generator=self.reflection_generator,
+                evolution_tracer=self.evolution_tracer,
                 file_suffix=self.config.file_suffix,
             )
 
