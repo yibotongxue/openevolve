@@ -18,9 +18,9 @@ import time
 import itertools
 import numpy as np
 
-DIM = 6
+DIM = 5
 TOL = 1e-6
-BENCHMARK = 72
+BENCHMARK = 40
 
 
 def compute_squared_norm(point: list[int]) -> int:
@@ -66,7 +66,7 @@ def evaluate(program_path: str):
             sys.path.insert(0, program_dir)
             program = __import__(module_name)
             start_time = time.time()
-            points = program.kissing_number6()
+            points = program.kissing_number(DIM)
             end_time = time.time()
             eval_time = end_time - start_time
         except Exception as err:
@@ -78,9 +78,9 @@ def evaluate(program_path: str):
         if not isinstance(points, np.ndarray):
             points = np.array(points)
 
-        if points.shape[1] != 6:
+        if points.shape[1] != DIM:
             raise ValueError(
-                f"Invalid shapes: points = {points.shape}, expected ({points.shape[1]},6)"
+                f"Invalid shapes: points = {points.shape}, expected ({points.shape[1]},{DIM})"
             )
 
         min_squared_distance, max_squared_norm = verify_sphere_packing(points, TOL)

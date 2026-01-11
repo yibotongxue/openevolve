@@ -137,6 +137,16 @@ class OpenEvolve:
         self.llm_ensemble = LLMEnsemble(self.config.llm.models)
         self.llm_evaluator_ensemble = LLMEnsemble(self.config.llm.evaluator_models)
 
+        self.config.prompt.system_message = self.config.prompt.system_message.replace(
+            "<dim>", str(self.config.dim)
+        ).replace(
+            "<sota_number>", str(self.config.sota_number)
+        )
+
+        print(self.config.prompt.system_message)
+
+        # import sys; sys.exit(0)
+
         self.prompt_sampler = PromptSampler(self.config.prompt)
         self.evaluator_prompt_sampler = PromptSampler(self.config.prompt)
         self.evaluator_prompt_sampler.set_templates("evaluator_system_message")
@@ -185,7 +195,7 @@ class OpenEvolve:
         # Initialize improved parallel processing components
         self.parallel_controller = None
 
-        self.reflection_generator = ReflectionGenerator(6, 72)
+        self.reflection_generator = ReflectionGenerator(config.dim, config.sota_number)
 
     def _setup_logging(self) -> None:
         """Set up logging"""

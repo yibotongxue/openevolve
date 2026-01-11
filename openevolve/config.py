@@ -390,6 +390,10 @@ class Config:
     language: str = None
     file_suffix: str = ".py"
 
+    # kissing
+    dim: int = 5
+    sota_number: int = 40
+
     # Component configurations
     llm: LLMConfig = field(default_factory=LLMConfig)
     prompt: PromptConfig = field(default_factory=PromptConfig)

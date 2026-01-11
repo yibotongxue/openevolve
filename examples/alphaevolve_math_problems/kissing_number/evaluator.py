@@ -65,7 +65,7 @@ def evaluate(program_path: str):
             sys.path.insert(0, program_dir)
             program = __import__(module_name)
             start_time = time.time()
-            points = program.kissing_number11()
+            points = program.kissing_number(DIM)
             end_time = time.time()
             eval_time = end_time - start_time
         except Exception as err:
@@ -77,9 +77,9 @@ def evaluate(program_path: str):
         if not isinstance(points, np.ndarray):
             points = np.array(points)
 
-        if points.shape[1] != 11:
+        if points.shape[1] != DIM:
             raise ValueError(
-                f"Invalid shapes: points = {points.shape}, expected ({points.shape[1]},11)"
+                f"Invalid shapes: points = {points.shape}, expected ({points.shape[1]},{DIM})"
             )
 
         verify_sphere_packing(points, TOL)
